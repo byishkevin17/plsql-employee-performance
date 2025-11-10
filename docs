@@ -1,9 +1,0 @@
-## Problem Statement
-
-A company wants to analyze employee performance based on evaluation scores. The HR team needs a PL/SQL-based system that:
-- Stores employee details.
-- Calculates grades based on scores.
-- Identifies top and low performers.
-- Handles invalid data using GOTO statements.
-
-This program demonstrates **Collections**, **Records**, and **GOTO statements** in PL/SQL.
