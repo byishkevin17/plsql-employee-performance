@@ -1,0 +1,86 @@
+-- Employee Performance Management System
+-- Demonstrates PL/SQL Collections, Records, and GOTO Statements
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+    TYPE emp_record IS RECORD (
+        emp_id      NUMBER,
+        emp_name    VARCHAR2(50),
+        department  VARCHAR2(30),
+        score       NUMBER,
+        grade       VARCHAR2(10)
+    );
+
+    TYPE emp_table IS TABLE OF emp_record INDEX BY BINARY_INTEGER;
+    employees emp_table;
+
+    i           INTEGER := 0;
+    top_score   NUMBER := 0;
+    low_score   NUMBER := 100;
+    top_emp     VARCHAR2(50);
+    low_emp     VARCHAR2(50);
+
+BEGIN
+    employees(1).emp_id := 101;
+    employees(1).emp_name := 'Alice';
+    employees(1).department := 'Finance';
+    employees(1).score := 86;
+
+    employees(2).emp_id := 102;
+    employees(2).emp_name := 'Brian';
+    employees(2).department := 'IT';
+    employees(2).score := 94;
+
+    employees(3).emp_id := 103;
+    employees(3).emp_name := 'Clara';
+    employees(3).department := 'HR';
+    employees(3).score := 72;
+
+    employees(4).emp_id := 104;
+    employees(4).emp_name := 'David';
+    employees(4).department := 'Marketing';
+    employees(4).score := -5;
+
+    FOR i IN 1..employees.COUNT LOOP
+        IF employees(i).score < 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Error: Invalid score for ' || employees(i).emp_name);
+            GOTO skip_employee;
+        END IF;
+
+        IF employees(i).score >= 90 THEN
+            employees(i).grade := 'A';
+        ELSIF employees(i).score >= 80 THEN
+            employees(i).grade := 'B';
+        ELSIF employees(i).score >= 70 THEN
+            employees(i).grade := 'C';
+        ELSE
+            employees(i).grade := 'D';
+        END IF;
+
+        IF employees(i).score > top_score THEN
+            top_score := employees(i).score;
+            top_emp := employees(i).emp_name;
+        END IF;
+
+        IF employees(i).score < low_score THEN
+            low_score := employees(i).score;
+            low_emp := employees(i).emp_name;
+        END IF;
+
+        DBMS_OUTPUT.PUT_LINE('Employee: ' || employees(i).emp_name ||
+                             ', Dept: ' || employees(i).department ||
+                             ', Score: ' || employees(i).score ||
+                             ', Grade: ' || employees(i).grade);
+
+        <<skip_employee>>
+        NULL;
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('----------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Top Performer: ' || top_emp || ' (' || top_score || ')');
+    DBMS_OUTPUT.PUT_LINE('Lowest Performer: ' || low_emp || ' (' || low_score || ')');
+    DBMS_OUTPUT.PUT_LINE('----------------------------------');
+
+END;
+/
